@@ -5,9 +5,15 @@ from python.helpers.print_style import PrintStyle
 
 
 class ScanStatusGuard(Extension):
+    # Tools that must never be blocked — they're how the agent communicates
+    WHITELISTED_TOOLS = frozenset({"response", "call_subordinate", "delegation"})
+
     async def execute(self, tool_args=None, tool_name="", **kwargs):
         config = get_plugin_config("guard-system", agent=self.agent) or {}
         if not config.get("enabled", True):
+            return
+
+        if tool_name in self.WHITELISTED_TOOLS:
             return
 
         scan_results = config.get("scan_results", {})
