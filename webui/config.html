@@ -1,72 +1,92 @@
 <html>
 <head>
-  <title>Guard System Settings</title>
-  <script type="module">
-    import { store } from "/components/plugins/plugin-settings-store.js";
-  </script>
+    <title>Guard System Settings</title>
 </head>
+
 <body>
-  <div x-data>
-    <template x-if="$store.pluginSettings">
-      <div x-init="$store.pluginSettings.onOpen()">
+    <div x-data>
+        <template x-if="$store.pluginSettings.settings">
+            <div>
+                <div class="section-title">Guard System</div>
+                <div class="section-description">
+                    Security guards for tool execution and prompt safety. Blocks tools with flagged scan status
+                    and detects prompt injection patterns.
+                </div>
 
-        <div style="display: flex; flex-direction: column; gap: 16px; max-width: 500px; padding: 8px;">
+                <div class="field">
+                    <div class="field-label">
+                        <div class="field-title">Enabled</div>
+                        <div class="field-description">Enable or disable the guard system.</div>
+                    </div>
+                    <div class="field-control">
+                        <label class="toggle">
+                            <input type="checkbox" x-model="$store.pluginSettings.settings.enabled" />
+                            <span class="toggler"></span>
+                        </label>
+                    </div>
+                </div>
 
-          <!-- Enabled -->
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" x-model="$store.pluginSettings.settings.enabled" />
-            <span>Enabled</span>
-          </label>
+                <div class="field">
+                    <div class="field-label">
+                        <div class="field-title">Max Prompt Length (chars)</div>
+                        <div class="field-description">
+                            Maximum allowed prompt length in characters. Prompts exceeding this limit will trigger a warning.
+                        </div>
+                    </div>
+                    <div class="field-control">
+                        <input type="number" min="1000" step="10000"
+                            x-model.number="$store.pluginSettings.settings.max_prompt_length" />
+                    </div>
+                </div>
 
-          <!-- Max Prompt Length -->
-          <div style="display: flex; flex-direction: column; gap: 4px;">
-            <label for="max_prompt_length">Max Prompt Length (chars)</label>
-            <input
-              id="max_prompt_length"
-              type="number"
-              min="1000"
-              step="10000"
-              x-model.number="$store.pluginSettings.settings.max_prompt_length"
-              style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; width: 200px;"
-            />
-          </div>
+                <div class="field">
+                    <div class="field-label">
+                        <div class="field-title">Injection Detection</div>
+                        <div class="field-description">
+                            Detect and warn about potential prompt injection patterns in user messages.
+                        </div>
+                    </div>
+                    <div class="field-control">
+                        <label class="toggle">
+                            <input type="checkbox" x-model="$store.pluginSettings.settings.injection_detection" />
+                            <span class="toggler"></span>
+                        </label>
+                    </div>
+                </div>
 
-          <!-- Injection Detection -->
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" x-model="$store.pluginSettings.settings.injection_detection" />
-            <span>Injection Detection</span>
-          </label>
+                <div class="field">
+                    <div class="field-label">
+                        <div class="field-title">Injection Patterns</div>
+                        <div class="field-description">
+                            Patterns to detect in prompts (one per line, supports regex). Matched against user messages
+                            to warn about potential prompt injection attempts.
+                        </div>
+                    </div>
+                    <div class="field-control">
+                        <textarea rows="8"
+                            x-model="$store.pluginSettings.settings._injection_patterns_text"
+                            x-init="
+                                $watch('$store.pluginSettings.settings.injection_patterns', (val) => {
+                                    if (Array.isArray(val)) {
+                                        $store.pluginSettings.settings._injection_patterns_text = val.join('\n');
+                                    }
+                                });
+                                $watch('$store.pluginSettings.settings._injection_patterns_text', (val) => {
+                                    if (typeof val === 'string') {
+                                        $store.pluginSettings.settings.injection_patterns = val.split('\n').filter(l => l.trim());
+                                    }
+                                });
+                                if (Array.isArray($store.pluginSettings.settings.injection_patterns)) {
+                                    $store.pluginSettings.settings._injection_patterns_text = $store.pluginSettings.settings.injection_patterns.join('\n');
+                                }
+                            "
+                            style="font-family: monospace; font-size: 13px; resize: vertical;"
+                        ></textarea>
+                    </div>
+                </div>
 
-          <!-- Injection Patterns -->
-          <div style="display: flex; flex-direction: column; gap: 4px;">
-            <label for="injection_patterns">Injection Patterns (one per line, supports regex)</label>
-            <textarea
-              id="injection_patterns"
-              rows="8"
-              x-model="$store.pluginSettings.settings._injection_patterns_text"
-              x-init="
-                $watch('$store.pluginSettings.settings.injection_patterns', (val) => {
-                  if (Array.isArray(val)) {
-                    $store.pluginSettings.settings._injection_patterns_text = val.join('\n');
-                  }
-                });
-                $watch('$store.pluginSettings.settings._injection_patterns_text', (val) => {
-                  if (typeof val === 'string') {
-                    $store.pluginSettings.settings.injection_patterns = val.split('\n').filter(l => l.trim());
-                  }
-                });
-                if (Array.isArray($store.pluginSettings.settings.injection_patterns)) {
-                  $store.pluginSettings.settings._injection_patterns_text = $store.pluginSettings.settings.injection_patterns.join('\n');
-                }
-              "
-              style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; font-size: 13px; resize: vertical;"
-            ></textarea>
-          </div>
-
-        </div>
-
-      </div>
-    </template>
-  </div>
+            </div>
+        </template>
+    </div>
 </body>
 </html>
