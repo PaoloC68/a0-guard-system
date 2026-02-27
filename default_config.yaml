@@ -1,0 +1,11 @@
+enabled: true
+max_prompt_length: 500000
+injection_detection: true
+injection_patterns:
+  - "ignore previous instructions"
+  - "ignore all previous"
+  - "disregard.*instructions"
+  - "you are now"
+  - "DAN mode"
+  - "jailbreak"
+scan_results: {}
