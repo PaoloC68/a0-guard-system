@@ -33,7 +33,7 @@ External scanners (or manual review) write results into the plugin's `scan_resul
 ### Setting Scan Results via Python
 
 ```python
-from python.helpers.plugins import get_plugin_config, save_plugin_config
+from helpers.plugins import get_plugin_config, save_plugin_config
 
 config = get_plugin_config("guard-system", agent=agent) or {}
 config.setdefault("scan_results", {})["my_skill"] = {

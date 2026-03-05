@@ -1,7 +1,7 @@
-from python.helpers.extension import Extension
-from python.helpers.errors import RepairableException
-from python.helpers.plugins import get_plugin_config
-from python.helpers.print_style import PrintStyle
+from helpers.extension import Extension
+from helpers.errors import RepairableException
+from helpers.plugins import get_plugin_config
+from helpers.print_style import PrintStyle
 
 
 class ScanStatusGuard(Extension):
